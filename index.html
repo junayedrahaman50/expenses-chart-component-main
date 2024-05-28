@@ -13,7 +13,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <title>Frontend Mentor | Expenses chart component</title>
 
-  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
   <style>
     /* css reset */
     * {
@@ -141,6 +140,7 @@
     .graph-bar {
       border-radius: 4.8px;
       margin-bottom: 7.2px;
+      width: 5rem;
     }
 
     .graph-bar:hover {
@@ -189,6 +189,41 @@
       letter-spacing: .288px;
       color: var(--medium-brown);
       -webkit-text-stroke: .48px var(--cream);
+    }
+
+    /* media queries */
+    @media (max-width: 38em) {
+
+      .card-header,
+      .card-content {
+        width: 90%;
+      }
+
+      .graph-bar {
+        width: 4rem;
+      }
+
+      html,
+      body {
+        font-size: 50%;
+      }
+    }
+
+    @media (max-width: 31em) {
+
+      .card-header,
+      .card-content {
+        width: 90%;
+      }
+
+      .graph-bar {
+        width: 3.6rem;
+      }
+
+      html,
+      body {
+        font-size: 43.75%;
+      }
     }
   </style>
 </head>
@@ -279,7 +314,6 @@
       const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
       // calculate height dynamically
       bars.forEach((bar, i) => {
-        bar.style.width = `5rem`;
         bar.style.height = `${((expenses[i].amount / total) * 100) * 6.54}px`;
         bar.style.backgroundColor = 'hsl(10, 79%, 65%)';
       })
@@ -300,7 +334,6 @@
         amounts[i].style.opacity = 0;
       })
     })
-
 
   </script>
 </body>
