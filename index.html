@@ -68,7 +68,7 @@
       align-items: center;
       background-color: var(--soft-red);
       color: var(--very-pale-orange);
-      transition: all .25s ease-in-out;
+      transition: all 0.3s ease;
     }
 
     .card-header-title {
@@ -78,7 +78,7 @@
       letter-spacing: 0.16px;
       color: var(--cream);
       -webkit-text-stroke: .16px var(--soft-red);
-      transition: all .25s ease-in-out;
+      transition: all 0.3s ease;
     }
 
     .card-header-money {
@@ -93,15 +93,102 @@
       max-width: 54rem;
       padding: 3.2rem 4rem;
       background-color: var(--very-pale-orange);
-      transition: all .25s ease-in-out;
+      transition: all 0.3s ease;
       border-radius: 1.92rem;
+      position: relative;
     }
 
     .card-content-title {
       font-size: 3.2rem;
       -webkit-text-stroke: .48px var(--cream);
-      transition: all .25s ease-in-out;
+      transition: all 0.3s ease;
       margin-bottom: 6.56rem;
+    }
+
+    .card-content-graph {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-content-graph li {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 1.6rem;
+      color: var(--medium-brown);
+      -webkit-text-stroke: .48px var(--cream);
+    }
+
+    .graph-money {
+      width: 7.5rem;
+      height: 4rem;
+      margin-top: -4.8rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      font-size: 1.728rem;
+      letter-spacing: .72px;
+      -webkit-text-stroke: .08px var(--dark-brown);
+      color: var(--very-pale-orange);
+      border-radius: 4px;
+      background-color: var(--dark-brown);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .graph-bar {
+      border-radius: 4.8px;
+      margin-bottom: 7.2px;
+    }
+
+    .graph-bar:hover {
+      opacity: .55;
+      cursor: pointer;
+    }
+
+    .divider {
+      margin: 3.2rem 0;
+      opacity: .1;
+    }
+
+    .card-content-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-amount-month {
+      font-size: 1.76rem;
+      color: var(--medium-brown);
+      font-weight: 400;
+      letter-spacing: .32px;
+      -webkit-text-stroke: .48px var(--cream);
+    }
+
+    .total-amount-value {
+      font-size: 4.8rem;
+      -webkit-text-stroke: .48px var(--cream);
+    }
+
+    .amount-stat {
+      margin-top: 2.4rem;
+      text-align: right;
+    }
+
+    .amount-stat-percentage {
+      font-size: 1.76rem;
+      letter-spacing: .32px;
+      -webkit-text-stroke: .48px var(--cream);
+    }
+
+    .amount-stat-month {
+      font-weight: 400;
+      font-size: 1.76rem;
+      letter-spacing: .288px;
+      color: var(--medium-brown);
+      -webkit-text-stroke: .48px var(--cream);
     }
   </style>
 </head>
@@ -118,29 +205,104 @@
 
     <div class="card-content">
       <h2 class="card-content-title">Spending - Last 7 days</h2>
+      <menu class="card-content-graph">
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+        <li>
+          <div class="graph-money"></div>
+          <div class="graph-bar"></div>
+          <div class="graph-day"></div>
+        </li>
+      </menu>
+      <hr class="divider">
+      <div class="card-content-footer">
+        <article class="total-amount">
+          <h2 class="total-amount-month">Total this month</h2>
+          <h3 class="total-amount-value">$478.33</h3>
+        </article>
+        <article class="amount-stat">
+          <h2 class="amount-stat-percentage">+2.4%</h2>
+          <h3 class="amount-stat-month">from last month</h3>
+        </article>
+      </div>
     </div>
 
   </main>
 
-  <!-- My balance
-  $921.48
+  <script>
+    const amounts = document.querySelectorAll('.graph-money');
+    const days = document.querySelectorAll('.graph-day');
+    const bars = document.querySelectorAll('.graph-bar');
+    let populated = false;
+    // fetch data from json file
+    const url = './data.json';
+    const expenses = [];
+    fetch(url).then(res => {
+      if (!res.ok) {
+        throw Error("Could not fetch the data for that resource");
+      }
+      return res.json();
+    }).then(data => {
+      expenses.push(...data);
+      console.table(expenses);
+      // fill data
+      days.forEach((day, i) => day.textContent = expenses[i].day);
+      amounts.forEach((amount, i) => amount.textContent = `$${expenses[i].amount}`);
+      const total = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+      // calculate height dynamically
+      bars.forEach((bar, i) => {
+        bar.style.width = `5rem`;
+        bar.style.height = `${((expenses[i].amount / total) * 100) * 6.54}px`;
+        bar.style.backgroundColor = 'hsl(10, 79%, 65%)';
+      })
+      bars[1].style.backgroundColor = 'hsl(186, 34%, 60%)';
+      console.log(total);
+    }).catch(err => {
+      console.error(err.message);
+    });
 
-  Spending - Last 7 days
+    // show/hide amounts
+    bars.forEach((bar, i) => {
+      bar.addEventListener('mouseenter', () => {
+        amounts[i].style.opacity = 1;
+      })
+    })
+    bars.forEach((bar, i) => {
+      bar.addEventListener('mouseleave', () => {
+        amounts[i].style.opacity = 0;
+      })
+    })
 
-  mon
-  tue
-  wed
-  thu
-  fri
-  sat
-  sun
 
-  Total this month
-  $478.33
-
-  +2.4%
-  from last month -->
-
+  </script>
 </body>
 
 </html>
